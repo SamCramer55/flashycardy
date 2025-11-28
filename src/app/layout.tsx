@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { Poppins } from "next/font/google";
 import { Button } from "@/components/ui/button";
+import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -24,21 +33,39 @@ export default function RootLayout({
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en" className="dark">
-        <body className={`${poppins.variable} antialiased`}>
-          <header className="flex items-center justify-end gap-4 p-4">
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button variant="outline">Sign in</Button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <Button>Sign up</Button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
-          {children}
+        <body className={`${poppins.variable} font-sans antialiased`}>
+          <ToastProvider>
+            <header className="border-b border-white/20">
+              <div className="flex items-center justify-between px-12 py-3 sm:px-20">
+                <div className="text-base font-semibold tracking-wide">
+                  <SignedIn>
+                    <Link href="/dashboard">Flashy Cardy Project</Link>
+                  </SignedIn>
+                  <SignedOut>
+                    <Link href="/">Flashy Cardy Project</Link>
+                  </SignedOut>
+                </div>
+                <div className="flex items-center gap-3">
+                  <SignedOut>
+                    <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                      <Button size="sm" variant="outline">
+                        Sign in
+                      </Button>
+                    </SignInButton>
+                    <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
+                      <Button size="sm">
+                        Sign up
+                      </Button>
+                    </SignUpButton>
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+                </div>
+              </div>
+            </header>
+            {children}
+          </ToastProvider>
         </body>
       </html>
     </ClerkProvider>

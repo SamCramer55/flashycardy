@@ -1,38 +1,19 @@
-import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/neon-http';
-import { eq } from 'drizzle-orm';
-import { usersTable } from './db/schema';
-
-const db = drizzle(process.env.DATABASE_URL!);
+import "dotenv/config";
+import { createDeck, type NewDeck } from "./db/queries/decks";
 
 async function main() {
-  const user: typeof usersTable.$inferInsert = {
-    name: 'John',
-    age: 30,
-    email: 'john@example.com',
+  const deck: NewDeck = {
+    title: "Sample deck",
+    description: "A sample deck created from the CLI script",
+    userId: "cli-user",
   };
 
-  await db.insert(usersTable).values(user);
-  console.log('New user created!');
-
-  const users = await db.select().from(usersTable);
-  console.log('Getting all users from the database: ', users);
-
-  await db
-    .update(usersTable)
-    .set({
-      age: 31,
-    })
-    .where(eq(usersTable.email, user.email));
-  console.log('User info updated!');
-
-  await db.delete(usersTable).where(eq(usersTable.email, user.email));
-  console.log('User deleted!');
+  const createdDeck = await createDeck(deck);
+  console.log("New deck created with ID:", createdDeck.id);
 }
 
 main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-
 
